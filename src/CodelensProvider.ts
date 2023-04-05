@@ -2,11 +2,7 @@ import axios from 'axios';
 import * as vscode from 'vscode';
 
 
-interface ChatGPTResponse {
-	choices: {
-		text: string;
-	}[];
-  }
+
 /**
  * CodelensProvider
  */
@@ -67,7 +63,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 
 	private async generateSummary(code: string): Promise<string> {
 		const apiKey = process.env.OPENAI_API_KEY; 
-		const response = await axios.post<ChatGPTResponse>('https://api.openai.com/v1/engines/davinci-codex/completions', {
+		const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', {
 			prompt: `summarize code: ${code}`,
 			max_tokens: 64,
 			n: 1,
@@ -75,9 +71,9 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 		}, {
 			headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer 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`,
+			'Authorization': `Bearer ${apiKey}`,
 			},
 		});
 		return response.data.choices[0].text.trim();
 		}
-}
+	}
