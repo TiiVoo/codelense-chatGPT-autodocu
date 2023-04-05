@@ -1,7 +1,16 @@
 import axios from 'axios';
 import * as vscode from 'vscode';
+import { OpenAIApi, Configuration } from "openai";
 
 
+
+// OpenAIApi required config
+const configuration = new Configuration({
+	apiKey: process.env.OPENAI_API_KEY,
+  });
+
+  // OpenAIApi initialization
+const openai = new OpenAIApi(configuration);
 
 /**
  * CodelensProvider
@@ -61,19 +70,21 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 		return null;
 	}
 
+
 	private async generateSummary(code: string): Promise<string> {
-		const apiKey = process.env.OPENAI_API_KEY; 
-		const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', {
-			prompt: `summarize code: ${code}`,
-			max_tokens: 64,
-			n: 1,
-			stop: ['\n'],
-		}, {
-			headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${apiKey}`,
-			},
-		});
-		return response.data.choices[0].text.trim();
+		try {
+			const prompt = `summarize code: ${code}`;
+			//const response = await openai.listEngines();
+			const completions = await openai.createCompletion({
+				model: 'text-davinci-003',
+				prompt: prompt,
+				max_tokens: 64,
+				n: 1,
+			});
+			return completions.data.choices[0].text.trim();
+		} catch (error) {
+			console.error(`OpenAI API error: ${error}`);
+			throw new Error(`Failed to generate summary: ${error}`);
 		}
+	}
 	}

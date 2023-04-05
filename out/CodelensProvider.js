@@ -1,8 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CodelensProvider = void 0;
-const axios_1 = require("axios");
 const vscode = require("vscode");
+const openai_1 = require("openai");
+// OpenAIApi required config
+const configuration = new openai_1.Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+// OpenAIApi initialization
+const openai = new openai_1.OpenAIApi(configuration);
 /**
  * CodelensProvider
  */
@@ -55,19 +61,21 @@ class CodelensProvider {
         return null;
     }
     async generateSummary(code) {
-        const apiKey = process.env.OPENAI_API_KEY;
-        const response = await axios_1.default.post('https://api.openai.com/v1/engines/davinci-codex/completions', {
-            prompt: `summarize code: ${code}`,
-            max_tokens: 64,
-            n: 1,
-            stop: ['\n'],
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            },
-        });
-        return response.data.choices[0].text.trim();
+        try {
+            const prompt = `summarize code: ${code}`;
+            //const response = await openai.listEngines();
+            const completions = await openai.createCompletion({
+                model: 'text-davinci-003',
+                prompt: prompt,
+                max_tokens: 64,
+                n: 1,
+            });
+            return completions.data.choices[0].text.trim();
+        }
+        catch (error) {
+            console.error(`OpenAI API error: ${error}`);
+            throw new Error(`Failed to generate summary: ${error}`);
+        }
     }
 }
 exports.CodelensProvider = CodelensProvider;
