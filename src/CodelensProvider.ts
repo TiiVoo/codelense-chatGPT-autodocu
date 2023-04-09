@@ -1,4 +1,3 @@
-import axios from 'axios';
 import * as vscode from 'vscode';
 import { OpenAIApi, Configuration } from "openai";
 
@@ -81,7 +80,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 				max_tokens: 64,
 				n: 1,
 			});
-			return completions.data.choices[0].text.trim();
+			return completions.data.choices[0].text!.trim();
 		} catch (error) {
 			console.error(`OpenAI API error: ${error}`);
 			throw new Error(`Failed to generate summary: ${error}`);
