@@ -79,8 +79,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
     
 
 	}
-		
-
+	
 		// Register command handler for the CodeLens command
 	vscode.commands.registerCommand("codelens-sample.showSummary", async (payload: string) => {
 		
