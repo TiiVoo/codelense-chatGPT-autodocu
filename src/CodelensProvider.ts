@@ -79,8 +79,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
     
 
 	}
-		
-
+	
 		// Register command handler for the CodeLens command
 	vscode.commands.registerCommand("codelens-sample.showSummary", async (payload: string) => {
 		
@@ -144,40 +143,61 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 
 	async function generateSummary(code: string): Promise<string> {
 		try {
-			let prompt = `Summarize: ${code}`;
-			const completions = await openai.createCompletion({
+			let prompt = `Summarize the code: ${code}`;
+			let completions = await openai.createCompletion({
 				model: 'text-davinci-003',
 				prompt: prompt,
-				temperature: 0.1,
-				max_tokens: 400,
+				temperature: 0.7,
+				max_tokens: 1000,
 				n: 1,
 			});
 			const summary = completions.data.choices[0].text!.trim();
-			const wordsPerLine = 10; // Change this to the desired number of words per line
-			const words = summary.split(' ');
-			for (let i = wordsPerLine; i < words.length; i += wordsPerLine + 1) {
-			words.splice(i, 0, '\n');
-			}
-			const summaryWithLineBreaks = words.join(' ');
 
-
-			prompt = `${code}`;
-			const instruction = "clean up and refactor";
-			const edits = await openai.createEdit({
-				model: 'code-davinci-edit-001',
-				input: prompt,
-				instruction: instruction,
-				temperature: 0.7,
+			prompt = `formulate the high level requirements for this code: ${code}`;
+		
+			completions = await openai.createCompletion({
+				model: 'text-davinci-003',
+				prompt: prompt,
+				temperature: 0.3,
+				max_tokens: 1000,
 				n: 1,
 			});
-			const editation = edits.data.choices[0].text!.trim();
-			return `Input/Code:\n${code}\n\nSummary:\n/*${summaryWithLineBreaks} */\n\nRefactoring:\n${editation}`;
+			const summary2 = completions.data.choices[0].text!.trim();
 
+			prompt = `describe the idea behind the code: ${code}`;		
+			completions = await openai.createCompletion({
+				model: 'text-davinci-003',
+				prompt: prompt,
+				temperature: 0.3,
+				max_tokens: 1000,
+				n: 1,
+			});
+			const summary3 = completions.data.choices[0].text!.trim();
 
+			prompt = `${code}`;		
+			const editorial = await openai.createEdit({
+				model: 'code-davinci-edit-001',
+				input: prompt,
+				instruction: 'improve the class and add comments',
+				temperature: 0.59
+			});
+			const edit = editorial.data.choices[0].text!.trim();
+
+			return `\n1: Summary\n/*${breaklines(summary)} */\n\n2: Requirements\n${breaklines(summary2)}\n\n3: Idea\n${breaklines(summary3)}\n\nRefactoring:\n\n${edit}\n\n\nOriginal Code:\n\n${code}\n`;
 
 		} catch (error) {
 			console.error(`OpenAI API error: ${error}`);
 			throw new Error(`Failed to generate summary: ${error}`);
+		}
+
+		function breaklines(summary: string) {
+			const wordsPerLine = 10; // Change this to the desired number of words per line
+			const words = summary.split(' ');
+			for (let i = wordsPerLine; i < words.length; i += wordsPerLine + 1) {
+				words.splice(i, 0, '\n');
+			}
+			const summaryWithLineBreaks = words.join(' ');
+			return summaryWithLineBreaks;
 		}
 	}
 	
