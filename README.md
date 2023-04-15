@@ -1,4 +1,6 @@
-# CodeLens Docu
+
+# CodeLens chatGPT Docu
+[![Node.js CI](https://github.com/TiiVoo/codelense-chatGPT-autodocu/actions/workflows/node.js.yml/badge.svg)](https://github.com/TiiVoo/codelense-chatGPT-autodocu/actions/workflows/node.js.yml)
 
 This is based on the a sample extension that shows the usage of the CodeLens API.
 
