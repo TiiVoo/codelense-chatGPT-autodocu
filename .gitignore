@@ -5612,3 +5612,9 @@ node_modules/yocto-queue/index.js
 node_modules/yocto-queue/license
 node_modules/yocto-queue/package.json
 node_modules/yocto-queue/readme.md
+out/CodelensProvider.js
+out/CodelensProvider.js.map
+out/extension.js
+out/extension.js.map
+codelens-chatgpt-summary-0.0.1.vsix
+codelens-docu-0.0.1.vsix

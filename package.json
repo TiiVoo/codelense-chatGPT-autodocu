@@ -1,14 +1,14 @@
 {
-    "name": "codelens-sample",
-    "displayName": "CodeLens Sample",
-    "description": "Samples for VS Code's CodeLens API",
+    "name": "codelens-chatgpt-summary",
+    "displayName": "CodeLens chatGPT summary",
+    "description": "VS Code's CodeLens chatGPT summary",
     "version": "0.0.1",
-    "publisher": "ms-vscode",
+    "publisher": "Timo Voelkl",
     "private": true,
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Microsoft/vscode-extension-samples"
+        "url": "https://github.com/TiiVoo/codelense-docu"
     },
     "engines": {
         "vscode": "^1.73.0"
@@ -17,18 +17,18 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onCommand:codelens-sample.enableCodeLens"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "title": "Enable CodeLens",
+                "title": "Enable chatGPT codelense",
                 "command": "codelens-sample.enableCodeLens",
                 "category": "CodeLens Sample"
             },
             {
-                "title": "Disable Codelens",
+                "title": "Disable chatGPT codelense",
                 "command": "codelens-sample.disableCodeLens",
                 "category": "CodeLens Sample"
             }
